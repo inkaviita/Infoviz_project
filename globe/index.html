@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Three.js + GeoJSON</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #000;
+    }
+
+    /* Panels */
+    .panel {
+      position: fixed;
+      top: 80px;
+      width: 180px;
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+      border-radius: 10px;
+      color: white;
+      font-family: Arial, sans-serif;
+      z-index: 10;
+    }
+    #leftPanel { left: 10px; }
+    #rightPanel { right: 10px; }
+    .panel ul { padding-left: 15px; }
+
+    /* Polluters chart */
+    #pollutersChart {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      height: 150px;            /* fixed height */
+      display: flex;
+      align-items: flex-end;     /* bars grow from bottom */
+      gap: 8px;
+      background: rgba(0,0,0,0.2);
+      padding: 4px;
+      z-index: 10;
+    }
+
+    /* Slider container */
+    #sliderContainer {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 20px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      z-index: 10;
+    }
+
+    #yearSlider {
+      -webkit-appearance: none;
+      width: 250px;
+      height: 8px;
+      background: #444;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    #yearSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #ff5555;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #fff;
+      transition: background 0.2s;
+    }
+
+    #yearSlider::-webkit-slider-thumb:hover { background: #ff8888; }
+    #yearSlider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #ff5555;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #fff;
+      transition: background 0.2s;
+    }
+
+    #yearLabel {
+      font-weight: bold;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    /* Legend */
+    #legend {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      z-index: 10;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .legend-item:last-child { margin-bottom: 0; }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+
+    .dot.red { background: red; }
+    .dot.blue { background: blue; }
+
+  #PlayBtn {
+  background: #ff5555;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+#PlayBtn:hover {
+  background: #ff8888;
+}
+
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170/build/three.module.js",
+        "jsm/": "https://cdn.jsdelivr.net/npm/three@0.170/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Panels -->
+  <div id="leftPanel" class="panel">
+    <h3>Top Polluters</h3>
+    <ul id="pollutersList"></ul>
+  </div>
+
+  <div id="rightPanel" class="panel">
+    <h3>Top Sufferers (needs a fix!!!)</h3>
+    <ul id="sufferersList"></ul>
+  </div>
+
+  <!-- Polluters chart -->
+  <div id="pollutersChart"></div>
+
+  <!-- Slider -->
+  <div id="sliderContainer">
+    <input id="yearSlider" type="range" min="1968" max="2018" value="1968" step="1">
+    <span id="yearLabel">2018</span>
+    <button id="PlayBtn">⏸ Pause</button>
+  </div>
+
+  <!-- Legend -->
+  <div id="legend">
+    <div class="legend-item">
+      <div class="dot red"></div>
+      <span>Emissions per country</span>
+    </div>
+    <div class="legend-item">
+      <div class="dot blue"></div>
+      <span>Severe Natural Disaster</span>
+    </div>
+  </div>
+
+  <!-- Main JS -->
+  <script type="module" src="index.js"></script>
+
+</body>
+</html>
