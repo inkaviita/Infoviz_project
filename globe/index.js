@@ -106,7 +106,6 @@ fetch('datasets/combined_disasters_suffering.json')
 
 
 function createEmissionDots(year) {
-  console.log("Creating emission dots for year:", year);
   Object.values(emissionDots).forEach(dot => globeGroup.remove(dot));
   emissionDots = {};
 
@@ -130,9 +129,7 @@ function createEmissionDots(year) {
 
 
 function createDisasterDots(year) {
-  console.log("Creating disaster dots for year:", year);
 
-  // Optionally, keep emission dots separate
   Object.values(disasterDots).forEach(dot => globeGroup.remove(dot));
   disasterDots = {};
 
@@ -207,36 +204,29 @@ function getTopCountries(year, n = 5) {
     .slice(0, n);
 
   // Top sufferers using suffering_index
-  const sufferersMap = {};
-  suffererData.forEach(d => {
-    if (parseInt(d.year) !== year) return;
-    const countryName = d.country;
-    if (!countryName) return;
-    sufferersMap[countryName] = (sufferersMap[countryName] || 0) + parseFloat(d.suffering_index);
-  });
-
-  const sufferers = Object.entries(sufferersMap)
-    .map(([country, index]) => ({ country, suffering_index: index }))
-    .sort((a,b) => b.suffering_index - a.suffering_index)
+  const sufferers = suffererData
+    .filter(d => parseInt(d.year) === year && validCountries.has(d.country))
+    .map(d => ({ country: d.country, suffering_index: parseFloat(d.suffering_index) }))
+    .sort((a, b) => b.suffering_index - a.suffering_index)
     .slice(0, n);
 
   return { polluters, sufferers };
 }
 
-function updateTopLists(year) {
-  const { polluters, sufferers } = getTopCountries(year);
+// function updateTopLists(year) {
+//   const { polluters, sufferers } = getTopCountries(year);
 
-  const pollutersList = document.getElementById("pollutersList");
-  const sufferersList = document.getElementById("sufferersList");
+//   const pollutersList = document.getElementById("pollutersList");
+//   const sufferersList = document.getElementById("sufferersList");
 
-  pollutersList.innerHTML = polluters
-    .map(p => `<li>${p.country}: ${p.value.toLocaleString()}</li>`)
-    .join('');
+//   pollutersList.innerHTML = polluters
+//     .map(p => `<li>${p.country}: ${p.value.toLocaleString()}</li>`)
+//     .join('');
 
-  sufferersList.innerHTML = sufferers
-    .map(s => `<li>${s.country}: ${s.suffering_index.toFixed(2)}</li>`)
-    .join('');
-}
+//   sufferersList.innerHTML = sufferers
+//     .map(s => `<li>${s.country}: ${s.suffering_index.toFixed(2)}</li>`)
+//     .join('');
+// }
 
 
 function updatePollutersChart(polluters) {
@@ -273,6 +263,40 @@ function updatePollutersChart(polluters) {
   });
 }
 
+function updateSufferersChart(sufferers) {
+  const chart = document.getElementById("sufferersChart");
+  chart.innerHTML = "";
+
+  if (!sufferers || sufferers.length === 0) return;
+
+  const chartHeight = chart.clientHeight;
+  const maxVal = Math.max(...sufferers.map(s => s.suffering_index));
+
+  sufferers.forEach(s => {
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "column";
+    wrapper.style.alignItems = "center";
+
+    const bar = document.createElement("div");
+    bar.style.width = "40px";
+    bar.style.height = `${(s.suffering_index / maxVal) * chartHeight}px`;
+    bar.style.backgroundColor = "blue";
+    bar.title = `${s.country}: ${s.suffering_index.toFixed(2)}`;
+
+    const label = document.createElement("div");
+    label.textContent = s.country;
+    label.style.color = "#fff";
+    label.style.fontSize = "12px";
+    label.style.marginTop = "4px";
+
+    wrapper.appendChild(bar);
+    wrapper.appendChild(label);
+    chart.appendChild(wrapper);
+  });
+}
+
+
 
 
 
@@ -308,8 +332,9 @@ function advanceYear() {
   createEmissionDots(currentYear);
   createDisasterDots(currentYear);
   const { polluters, sufferers } = getTopCountries(currentYear);
-  updateTopLists(currentYear);
+  // updateTopLists(currentYear);
   updatePollutersChart(polluters);
+  updateSufferersChart(sufferers);
 }
 
 // Auto-play interval
@@ -324,7 +349,7 @@ slider.addEventListener("input", e => {
   createEmissionDots(currentYear);
   createDisasterDots(currentYear);
   const { polluters, sufferers } = getTopCountries(currentYear);
-  updateTopLists(currentYear);
+  // updateTopLists(currentYear);
   updatePollutersChart(polluters);
 
   // Optionally pause auto-play while dragging

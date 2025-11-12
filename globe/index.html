@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Three.js + GeoJSON</title>
+  <title>Poluters vs Sufferers</title>
 
   <style>
     body {
@@ -17,7 +17,7 @@
     .panel {
       position: fixed;
       top: 80px;
-      width: 180px;
+      width: 220px;
       background: rgba(0,0,0,0.6);
       padding: 10px;
       border-radius: 10px;
@@ -28,11 +28,12 @@
     #leftPanel { left: 10px; }
     #rightPanel { right: 10px; }
     .panel ul { padding-left: 15px; }
+    .panel ul { padding-right: 15px;}
 
     /* Polluters chart */
     #pollutersChart {
       position: fixed;
-      bottom: 20px;
+      bottom: 120px;
       left: 20px;
       height: 150px;            /* fixed height */
       display: flex;
@@ -42,6 +43,20 @@
       padding: 4px;
       z-index: 10;
     }
+
+    #sufferersChart {
+      position: fixed;
+      bottom: 120px;
+      right: 20px;          /* opposite side */
+      height: 150px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      background: rgba(0,0,0,0.2);
+      padding: 4px;
+      z-index: 10;
+    }
+
 
     /* Slider container */
     #sliderContainer {
@@ -162,16 +177,15 @@
   <!-- Panels -->
   <div id="leftPanel" class="panel">
     <h3>Top Polluters</h3>
-    <ul id="pollutersList"></ul>
   </div>
 
   <div id="rightPanel" class="panel">
-    <h3>Top Sufferers (needs a fix!!!)</h3>
-    <ul id="sufferersList"></ul>
+    <h3>Top Sufferers*</h3>
   </div>
 
   <!-- Polluters chart -->
   <div id="pollutersChart"></div>
+  <div id="sufferersChart"></div>
 
   <!-- Slider -->
   <div id="sliderContainer">
@@ -184,11 +198,14 @@
   <div id="legend">
     <div class="legend-item">
       <div class="dot red"></div>
-      <span>Emissions per country</span>
+      <span>CO₂ Emissions per country</span>
     </div>
     <div class="legend-item">
       <div class="dot blue"></div>
       <span>Severe Natural Disaster</span>
+    </div>
+    <div class="sufferer-info">
+      <span>*cumulative disaster intensity / cumulative emissions</span>
     </div>
   </div>
 
