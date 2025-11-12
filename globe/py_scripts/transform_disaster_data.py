@@ -26,7 +26,7 @@ df3 = df3[df3['level'] > 1]
 grouped = df3.groupby(['year', 'lat_rounded', 'lon_rounded'])
 
 aggregated = grouped.apply(lambda x: pd.Series({
-    'country': x['country'].iloc[0],  # ✅ keep the first country
+    'country': x['country'].iloc[0],  # keep the first country
     'level': x['level'].sum(),        # sum of levels
     'disastertype': ', '.join(x['disastertype']),  # combine disaster types
     'latitude': x['latitude'].iloc[0],
